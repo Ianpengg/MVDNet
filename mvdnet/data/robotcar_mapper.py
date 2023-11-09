@@ -122,6 +122,13 @@ class RobotCarMapper:
         dataset_dict["lidar_intensity"] = lidar_intensity
         dataset_dict["lidar_occupancy"] = lidar_occupancy
 
+        radar_only = True
+
+        if radar_only:
+            # print("RADAR_ONLY !!!!!!!!")
+            dataset_dict["lidar_intensity"] = [torch.zeros_like(data) for data in lidar_intensity]
+            dataset_dict["lidar_occupancy"] = [torch.zeros_like(data) for data in lidar_occupancy]
+
         annos = dataset_dict["annotations"]
         for car in annos:
             car["bbox"][0] = car["bbox"][0] / self.delta_l + (self.pixel_l - 1) / 2.0
