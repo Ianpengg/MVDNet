@@ -127,3 +127,7 @@ dmypy.json
 
 # Pyre type checker
 .pyre/
+data/RobotCar/object/label_cached/*
+data/RobotCar/object/parsed_result/*
+data/RobotCar/object/
+output/*
