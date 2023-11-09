@@ -138,6 +138,15 @@ class RobotCarEvaluator(DatasetEvaluator):
 
             results.append(result)
         return results
+    
+    def load_predict(self, file_path):
+        """
+        Skip the inference step and load the prediction from file
+        """
+        predict = json.loads(open(file_path).read())
+        self._predictions = predict
+        
+
 
     def evaluate(self):
         if self._distributed:
