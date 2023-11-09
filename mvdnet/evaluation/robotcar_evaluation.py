@@ -80,17 +80,22 @@ class RobotCarEvaluator(DatasetEvaluator):
         split_path = self._metadata.split_path
         pixel_l = cfg.INPUT.LIDAR.PROJECTION.PIXEL_L
         delta_l = cfg.INPUT.LIDAR.PROJECTION.DELTA_L
+        # logger.info("The annotaion path is {}{}".format(data_root, split_path)) 
+        print("The annotaion path is {}{}".format(data_root, split_path))
         robotcar_dataset = get_robotcar_dicts(data_root, split_path)
         for record in robotcar_dataset:
             for car in record["annotations"]:
+                # convert the real world-scale into pixel scale on image
                 car["bbox"][0] = car["bbox"][0] / delta_l + (pixel_l - 1) / 2.0
                 car["bbox"][1] = car["bbox"][1] / delta_l + (pixel_l - 1) / 2.0
                 car["bbox"][2] = car["bbox"][2] / delta_l
                 car["bbox"][3] = car["bbox"][3] / delta_l
+        # construct the ground truth in COCO api format
         self._coco_api = create_coco_api(robotcar_dataset)
 
         logger.info("Unique objects loaded: {}".format(len(robotcar_dataset)))
 
+        # used to check if the annotations are exsited in the coco_api.datasets
         self._do_evaluation = "annotations" in self._coco_api.dataset
 
     def reset(self):
@@ -99,6 +104,7 @@ class RobotCarEvaluator(DatasetEvaluator):
     def _tasks_from_config(self, cfg):
         return ("bbox",)
 
+    # save the input(ground-truth) result and output(predicted) result into self._predictions
     def process(self, inputs, outputs):
         for input, output in zip(inputs, outputs):
             prediction = {"image_id": input["image_id"]}
